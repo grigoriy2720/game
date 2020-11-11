@@ -91,33 +91,8 @@
 			var DX = 0;
 			var DY =0;
 
-			var generate = function() {
-
-				for (var i = 0; i<5; i++) {
-
-					DX += r(300, 700);
-					DY += r(-110, 110);
-
-					wall.push(
-						game.newImageObject({
-							file : "3.png",
-							x : DX + W,
-							y : 340 - DY,
-						}));
-
-					wall.push(
-						game.newImageObject({
-							file : "3.png",
-							x : DX + W,
-							y : -720 - DY,
-							angle: 180
-						}));
-				};
-			};
-
 			game.newLoop('myGame', function () {
 				pjs.presets.bgCycle(fon, -2);
-				generate();
 				fon.draw();
 				player.draw();
 				OOP.drawArr(map);
@@ -128,33 +103,6 @@
 					presets.physicsMoveCollision(map[i])
 				}
 				presets.physicsMove(); 
-
-
-				for (var i in wall) {
-					wall[i].x -=4;
-
-					if (wall[i].x + wall[i].w < 0 && wall[i].y>0) {
-						var G = r(-110, 110);
-						count++;
-					}
-
-					if (wall[i].x + wall[i].w <0) {
-						wall[i].x = 2400;
-
-        				if (wall[i].y>0) {
-        					wall[i].y = 340 - G;
-        				}
-
-						if (wall[i].y<0) {
-							wall[i].y = -720 - G;
-						}
-					}
-
-    				if (player.isStaticIntersect(wall[i].getStaticBox())) {
-    					// game.setLoop('menu');
-    				}
-    				wall[i].draw();
-    			}
 			})
 
 			game.setLoop('myGame');
