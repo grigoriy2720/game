@@ -42,8 +42,9 @@ var fon = game.newImageObject({
      x : 0, 
      y : 0,
    });
-
-
+var music = new Audio();
+music.src = "audio/music.mp3";
+// var music = pjs.wAudio.newAudio("audio/music.mp3", 0.5);
 
 
 var wall = [];
@@ -147,6 +148,7 @@ pjs.presets.bgCycle(fon, -2);
 
 
 fon.draw();
+music.play();
 player.draw();
 
 if (key.isDown('LEFT')) {
@@ -196,17 +198,17 @@ for (var i in wall) {
 
     if (player.isStaticIntersect(wall[i].getStaticBox())) {
     	player.y = wall[i].y - player.h;
+    	console.log(wall[i].x, wall[i].w, player.x, player.w)
     	if (mouse.isDown('LEFT')) {
     		let timerId = setInterval(() => player.y -= 1, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
 			// player.y -=200;
 		}
-		if (wall[i].y - player.h < wall[i].y - player.h - 5) {
+		if (player.x == wall[i].x + wall[i].w) {
 			game.setLoop('menu');
 		}
     	
     }
-
 
 	wall[i].draw();
 }
