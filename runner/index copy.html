@@ -25,7 +25,7 @@ var r = pjs.math.random;
 var WH = pjs.game.getWH();
 var W=WH.w;
 var H=WH.h;
-
+var gravity = 1;
 var player = game.newAnimationObject(   { 
      animation : pjs.tiles.newImage("2.png").getAnimation(0, 0, 128, 163, 8), 
      x : 200, 
@@ -137,7 +137,7 @@ game.newLoop('game', function () {
 
 
 // dy+=0.5;
-player.y +=1;
+player.y += gravity;
 // player.angle=dy;
 // if (mouse.isDown('LEFT')) {
 // 	player.y -=30;
@@ -146,9 +146,9 @@ player.y +=1;
 
 pjs.presets.bgCycle(fon, -2);
 
-
+gravity = 1;
 fon.draw();
-music.play();
+// music.play();
 player.draw();
 
 if (key.isDown('LEFT')) {
@@ -196,27 +196,27 @@ for (var i in wall) {
 
     }
 
-    if (player.isStaticIntersect(wall[i].getStaticBox())) {
-    	player.y = wall[i].y - player.h;
+
+    if (player.isStaticIntersect(wall[i].getStaticBoxW())) {
+    	gravity = 0;
+    	// player.y = wall[i].y - player.h - 1;
     	console.log(wall[i].x, wall[i].w, player.x, player.w)
     	if (mouse.isDown('LEFT')) {
-    		let timerId = setInterval(() => player.y -= 1, 50);
+    		let timerId = setInterval(() => player.y -= 1.5, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
-			// player.y -=200;
 		}
-		if (player.x == wall[i].x + wall[i].w) {
-			game.setLoop('menu');
-		}
-    	
+		setTimeout("gravity = 1", 500)
     }
-
+    if (player.isStaticIntersect(wall[i].getStaticBoxA())) {
+		game.setLoop('menu');
+    }
 	wall[i].draw();
 }
 
 
-   if ( player.y + player.h/2 < 0 || player.y > H ) { 
-    	// game.setLoop('menu');
-    }
+   // if ( player.y + player.h/2 < 0 || player.y > H ) { 
+   //  	// game.setLoop('menu');
+   //  }
 
 pjs.brush.drawText({
   text : "Счет: " + count, 
