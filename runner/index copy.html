@@ -51,16 +51,20 @@ var wall = [];
 var DX = 0; // сдвиг столбиков по оси Х
 var DY =0; // сдвиг столбиков по оси Y
 
-
+let life = 3;
 var count=0;
 
+var start = game.newImageObject({ 
+     file : "start.png", 
+     x : 400, 
+     y : 300,
+   });
 var generate = function() {
 
 for (var i = 0; i<5; i++) {
 
-DX += r(300, 700);
-DY += r(-110, 110);
-
+DX += r(300, 500);
+DY += r(-55, 55);
 
 wall.push(
    game.newImageObject({ 
@@ -68,6 +72,8 @@ wall.push(
      x : DX + W, 
      y : 340 - DY,
    }));
+
+
 
 // wall.push(
 //    game.newImageObject({ 
@@ -91,13 +97,16 @@ wall.push(
 game.newLoop('menu', function () {
 
 wall = [];
-
-player.x=200;
-player.y=-270;
+life = 3;
+start.x = 400;
+player.x=400;
+player.y=270;
 player.angle=0;
 dy=0;
-
+fon.x = 0;
+fon.y = 0;
 fon.draw();
+start.draw();
 player.draw();
 
 pjs.brush.drawText({
@@ -106,7 +115,12 @@ pjs.brush.drawText({
   color : "black",
   size: 20
 });
-
+pjs.brush.drawText({
+  text : "Жизнь: " + life, 
+  x : 20, y : 80, 
+  color : "black",
+  size: 20
+});
 pjs.brush.drawText({
   text : "Счет: " + count, 
   x : 20, y : 50, 
@@ -124,7 +138,7 @@ if (mouse.isDown('LEFT')) {
 
 
 
-}) // закончился ировой цикл menu
+})
 
 
 
@@ -134,7 +148,6 @@ if (mouse.isDown('LEFT')) {
 
 
 game.newLoop('game', function () {
-
 
 // dy+=0.5;
 player.y += gravity;
@@ -148,30 +161,39 @@ pjs.presets.bgCycle(fon, -2);
 
 gravity = 1;
 fon.draw();
-// music.play();
+music.play();
+start.draw();
 player.draw();
 
 if (key.isDown('LEFT')) {
 	if (player.x != 0) {
-		player.x -= 1;
+		player.x -= 2;
 	}
 }
 if (key.isDown('A')) {
 	if (player.x != 0) {
-		player.x -= 1;
+		player.x -= 2;
 	}
 }
 if (key.isDown('RIGHT')) {
 	if (player.x < W - player.w) {
-		player.x += 1; 
+		player.x += 2; 
 	}
 }
 if (key.isDown('D')) {
 	if (player.x < W - player.w) {
-		player.x += 1; 
+		player.x += 2; 
 	}
 }
-
+start.x -= 2;
+    if (player.isStaticIntersect(start.getStaticBoxW())) {
+    	gravity = 0;
+    	if (key.isDown('W')) {
+    		let timerId = setInterval(() => player.y -= 1.5, 50);
+    		setTimeout(() => {clearInterval(timerId);}, 2000);
+		}
+		setTimeout("gravity = 1", 3000)
+    }
 
 for (var i in wall) {
 
@@ -201,23 +223,36 @@ for (var i in wall) {
     	gravity = 0;
     	// player.y = wall[i].y - player.h - 1;
     	console.log(wall[i].x, wall[i].w, player.x, player.w)
-    	if (mouse.isDown('LEFT')) {
+    	if (key.isDown('W')) {
     		let timerId = setInterval(() => player.y -= 1.5, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
 		}
 		setTimeout("gravity = 1", 500)
+
     }
     if (player.isStaticIntersect(wall[i].getStaticBoxA())) {
-		game.setLoop('menu');
+    	if (life > 0) {
+    		life -= 1;
+    		player.y = wall[i].y - player.h - 5;
+    	}
+    	else game.setLoop('menu');
+		
     }
 	wall[i].draw();
 }
+// if (start.x < 50) {
 
+// }
 
    // if ( player.y + player.h/2 < 0 || player.y > H ) { 
    //  	// game.setLoop('menu');
    //  }
-
+pjs.brush.drawText({
+  text : "Жизнь: " + life, 
+  x : 20, y : 40, 
+  color : "black",
+  size: 20
+});
 pjs.brush.drawText({
   text : "Счет: " + count, 
   x : 20, y : 20, 
