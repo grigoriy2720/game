@@ -23,7 +23,7 @@ var player = game.newImageObject({
 var dy=0; // движение персонажа вних
 
 var fon = game.newImageObject({ 
-     file : "img/1.png", 
+     file : "img/1.jpg", 
      x : 0, 
      y : 0,
    });
