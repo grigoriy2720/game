@@ -1,14 +1,11 @@
 var pjs = new PointJS(1100, 620, {backgroundColor: ''})
-
 pjs.system.initFullPage();
-
 var game = pjs.game;
 var mouse = pjs.mouseControl;
 mouse.initControl();
 var key = pjs.keyControl;
 key.initControl();
 var r = pjs.math.random;
-
 var WH = pjs.game.getWH();
 var W=WH.w;
 var H=WH.h;
@@ -20,25 +17,18 @@ var player = game.newImageObject({
      h : 32,
      delay: 3
    }); 
-let dy=0; // движение персонажа вних
 let speed = 3;
 var fon = game.newImageObject({ 
      file : "img/1.jpg", 
      x : 0, 
      y : 0,
    });
-
 var wall = [];
 let DX = 0; // сдвиг столбиков по оси Х
-let DY =0; // сдвиг столбиков по оси Y
 let count=0;
 var generate = function() {
-
 for (var i = 0; i<5; i++) {
-
 DX += r(300, 500);
-DY += r(-55, 55);
-
 wall.push(
    game.newImageObject({ 
      file : "img/box.png", 
@@ -47,14 +37,12 @@ wall.push(
    }));
 };
 };
-
 game.newLoop('menu', function () {
 speed = 3;
 wall = [];
 player.x=400;
 player.y=420;
 player.angle=0;
-dy=0;
 fon.x = 0;
 fon.y = 0;
 fon.draw();
@@ -72,25 +60,14 @@ pjs.brush.drawText({
   color : "black",
   size: 20
 });
-
 if (mouse.isDown('LEFT')) {
 	DX=0;
-	DY=0;
 	generate();
 	count=0;
 	game.setLoop('game');
 }
 })
-
-
 game.newLoop('game', function () {
-
-// dy+=0.5;
-// player.angle=dy;
-// if (mouse.isDown('LEFT')) {
-// 	player.y -=30;
-// }
-
 pjs.presets.bgCycle(fon, -2);
 fon.draw();
 player.draw();
@@ -113,15 +90,11 @@ if (player.y == 420) {
 		setTimeout(() => {clearInterval(timerId);}, 1000)
 		let timer = setInterval(() => player.y += 2, 62.5);
 		setTimeout(() => {clearInterval(timer);}, 2000)
-		// player.y -= 64;
 		speed += 0.01;
-		// setTimeout("player.y += 32", 2000)
 	}
 }
 for (var i in wall) {
-
     wall[i].x -= speed;
-
  if (wall[i].x + wall[i].w < 0 && wall[i].y>0) {
  	var G = r(-110, 110);
  	count++;
@@ -129,14 +102,11 @@ for (var i in wall) {
     if (wall[i].x + wall[i].w <0) {
     	wall[i].x = 2400;
     }
-
-
     if (player.isStaticIntersect(wall[i].getStaticBoxW())) {
     	if (key.isDown('W')||key.isDown('UP')) {
     		let timerId = setInterval(() => player.y -= 1.5, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
 		}
-
     }
     if (player.isStaticIntersect(wall[i].getStaticBoxA())) {
     	game.setLoop('menu');
