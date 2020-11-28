@@ -84,6 +84,9 @@ game.newLoop('game', function () {//функция начала игры
             player.angle += 1;
         }
     }
+    if (player.y > 420) {//установка базового позиционирования
+    	player.y = 420;
+    }
     if (player.y == 420) {//отслеживание возможности для прыжка
         if (key.isDown('UP') || key.isDown('W')) {//функция прыэка
             let timerId = setInterval(() => player.y -= 4, 62.5);//взлет персонажа
@@ -105,16 +108,8 @@ game.newLoop('game', function () {//функция начала игры
         if (box[i].x + box[i].w < 0) {
             box[i].x = 2400;
         }
-        if (player.isStaticIntersect(box[i].getStaticBoxW())) {//проверка столкновения
-            if (key.isDown('W') || key.isDown('UP')) {
-                let timerId = setInterval(() => player.y -= 1.5, 50);
-                setTimeout(() => {
-                    clearInterval(timerId);
-                }, 2000);
-            }
-        }
-        if (player.isStaticIntersect(box[i].getStaticBoxA())) {
-            game.setLoop('menu');
+        if (player.isStaticIntersect(box[i].getStaticBox())) {//проверка столкновения
+			game.setLoop('menu');
         }
         box[i].draw();//отрисовка препятствия
     }
