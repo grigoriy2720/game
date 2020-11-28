@@ -12,24 +12,14 @@ var r = pjs.math.random;
 var WH = pjs.game.getWH();
 var W=WH.w;
 var H=WH.h;
-var gravity = 1;
-var player = game.newAnimationObject(   { 
-     animation : pjs.tiles.newImage("img/2.png").getAnimation(0, 0, 128, 163, 8), 
+var player = game.newImageObject({ 
+     file : "img/ball.png", 
      x : 200, 
      y : 200,
      w : 34,
      h : 24,
      delay: 3
    }); 
-var helicopter = game.newImageObject(   { 
-     file : "img/helicopter.png", 
-     x : W, 
-     y : 64,
-     w : 64,
-     h : 64,
-     delay: 3
-   });
-
 var dy=0; // движение персонажа вних
 
 var fon = game.newImageObject({ 
@@ -37,16 +27,11 @@ var fon = game.newImageObject({
      x : 0, 
      y : 0,
    });
-var music = new Audio();
-music.src = "audio/music.mp3";
-// var music = pjs.wAudio.newAudio("audio/music.mp3", 0.5);
-
 
 var wall = [];
 var DX = 0; // сдвиг столбиков по оси Х
 var DY =0; // сдвиг столбиков по оси Y
 
-let life = 3;
 var count=0;
 
 var start = game.newImageObject({ 
@@ -85,8 +70,6 @@ game.newLoop('menu', function () {
 wall = [];
 life = 3;
 start.x = 600;
-helicopter.x = W;
-helicopter.y = 64;
 player.x=600;
 player.y=270;
 player.angle=0;
@@ -96,17 +79,10 @@ fon.y = 0;
 fon.draw();
 start.draw();
 player.draw();
-// helicopter.draw();
 
 pjs.brush.drawText({
   text : "Нажми мышкой на сцене, чтобы начать игру", 
   x : 20, y : 20, 
-  color : "black",
-  size: 20
-});
-pjs.brush.drawText({
-  text : "Жизнь: " + life, 
-  x : 20, y : 80, 
   color : "black",
   size: 20
 });
@@ -130,17 +106,13 @@ if (mouse.isDown('LEFT')) {
 game.newLoop('game', function () {
 
 // dy+=0.5;
-player.y += gravity;
 // player.angle=dy;
 // if (mouse.isDown('LEFT')) {
 // 	player.y -=30;
 // }
 
 pjs.presets.bgCycle(fon, -2);
-
-gravity = 1;
 fon.draw();
-music.play();
 start.draw();
 player.draw();
 
@@ -163,7 +135,6 @@ if (start.x > -300) {
     		let timerId = setInterval(() => player.y -= 1.5, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
 		}
-		setTimeout("gravity = 1", 3000)
     }
 
 for (var i in wall) {
@@ -191,37 +162,17 @@ for (var i in wall) {
 
 
     if (player.isStaticIntersect(wall[i].getStaticBoxW())) {
-    	gravity = 0;
-    	// player.y = wall[i].y - player.h - 1;
     	if (key.isDown('W')||key.isDown('UP')) {
     		let timerId = setInterval(() => player.y -= 1.5, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
 		}
-		setTimeout("gravity = 1", 500)
 
     }
     if (player.isStaticIntersect(wall[i].getStaticBoxA())) {
-    	if (life > 0) {
-    		life -= 1;
-    		player.y = wall[i].y - player.h - 5;
-    	}
-    	else game.setLoop('menu');
-		
+    	game.setLoop('menu');
     }
 	wall[i].draw();
-}console.log(helicopter.x);
-if (count >= 10) {
-	helicopter.draw();
-  if (helicopter.x > W/2) {
-    helicopter.x -= 2;
-  }
 }
-pjs.brush.drawText({
-  text : "Жизнь: " + life, 
-  x : 20, y : 40, 
-  color : "black",
-  size: 20
-});
 pjs.brush.drawText({
   text : "Счет: " + count, 
   x : 20, y : 20, 
