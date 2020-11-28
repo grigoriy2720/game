@@ -16,12 +16,12 @@ var player = game.newImageObject({
      file : "img/ball.png", 
      x : 200, 
      y : 200,
-     w : 34,
-     h : 24,
+     w : 32,
+     h : 32,
      delay: 3
    }); 
-var dy=0; // движение персонажа вних
-
+let dy=0; // движение персонажа вних
+let speed = 3;
 var fon = game.newImageObject({ 
      file : "img/1.jpg", 
      x : 0, 
@@ -29,16 +29,9 @@ var fon = game.newImageObject({
    });
 
 var wall = [];
-var DX = 0; // сдвиг столбиков по оси Х
-var DY =0; // сдвиг столбиков по оси Y
-
-var count=0;
-
-var start = game.newImageObject({ 
-     file : "img/start.png", 
-     x : 600, 
-     y : 300,
-   });
+let DX = 0; // сдвиг столбиков по оси Х
+let DY =0; // сдвиг столбиков по оси Y
+let count=0;
 var generate = function() {
 
 for (var i = 0; i<5; i++) {
@@ -48,36 +41,23 @@ DY += r(-55, 55);
 
 wall.push(
    game.newImageObject({ 
-     file : "img/3.png", 
+     file : "img/box.png", 
      x : DX + W, 
-     y : 340 - DY,
+     y : 390,
    }));
-
-
-
-// wall.push(
-//    game.newImageObject({ 
-//      file : "3.png", 
-//      x : DX + W, 
-//      y : -720 - DY,
-//      angle: 180
-//    }));
 };
 };
 
 game.newLoop('menu', function () {
-
+speed = 3;
 wall = [];
-life = 3;
-start.x = 600;
-player.x=600;
-player.y=270;
+player.x=400;
+player.y=420;
 player.angle=0;
 dy=0;
 fon.x = 0;
 fon.y = 0;
 fon.draw();
-start.draw();
 player.draw();
 
 pjs.brush.drawText({
@@ -113,51 +93,41 @@ game.newLoop('game', function () {
 
 pjs.presets.bgCycle(fon, -2);
 fon.draw();
-start.draw();
 player.draw();
-
+player.angle += 1;
 if (key.isDown('LEFT')||key.isDown('A')) {
 	if (player.x != 0) {
 		player.x -= 2;
+		player.angle -= 3;
 	}
 }
 if (key.isDown('RIGHT')||key.isDown('D')) {
 	if (player.x < W - player.w) {
-		player.x += 2; 
+		player.x += 2;
+		player.angle += 1;
 	}
 }
-if (start.x > -300) {
-	start.x -= 3;
+if (player.y == 420) {
+	if (key.isDown('UP')||key.isDown('W')) {
+		let timerId = setInterval(() => player.y -= 4, 62.5);
+		setTimeout(() => {clearInterval(timerId);}, 1000)
+		let timer = setInterval(() => player.y += 2, 62.5);
+		setTimeout(() => {clearInterval(timer);}, 2000)
+		// player.y -= 64;
+		speed += 0.01;
+		// setTimeout("player.y += 32", 2000)
+	}
 }
-    if (player.isStaticIntersect(start.getStaticBoxW())) {
-    	gravity = 0;
-    	if (key.isDown('W')||key.isDown('UP')) {
-    		let timerId = setInterval(() => player.y -= 1.5, 50);
-    		setTimeout(() => {clearInterval(timerId);}, 2000);
-		}
-    }
-
 for (var i in wall) {
 
-    wall[i].x -=4;
+    wall[i].x -= speed;
 
  if (wall[i].x + wall[i].w < 0 && wall[i].y>0) {
  	var G = r(-110, 110);
  	count++;
  }
-
-
     if (wall[i].x + wall[i].w <0) {
     	wall[i].x = 2400;
-
-        if (wall[i].y>0) {
-        	wall[i].y = 340 - G;
-        }
-
-        if (wall[i].y<0) {
-        	wall[i].y = -820 - G;
-        }
-
     }
 
 
