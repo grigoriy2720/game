@@ -21,14 +21,27 @@ var player = game.newAnimationObject(   {
      h : 24,
      delay: 3
    }); 
-var helicopter = game.newImageObject(   { 
+var helicopter_1 = game.newImageObject({
      file : "img/helicopter.png", 
      x : W, 
      y : 64,
      w : 64,
      h : 64,
-     delay: 3
-   });
+});
+var helicopter_2 = game.newImageObject({
+	file : "img/helicopter.png", 
+     x : W, 
+     y : 64,
+     w : 64,
+     h : 64,
+})
+var helicopter_3 = game.newImageObject({
+	file : "img/helicopter.png", 
+     x : W, 
+     y : 64,
+     w : 64,
+     h : 64,
+})
 
 var dy=0; // движение персонажа вних
 
@@ -39,8 +52,6 @@ var fon = game.newImageObject({
    });
 var music = new Audio();
 music.src = "audio/music.mp3";
-// var music = pjs.wAudio.newAudio("audio/music.mp3", 0.5);
-
 
 var wall = [];
 var DX = 0; // сдвиг столбиков по оси Х
@@ -48,7 +59,8 @@ var DY =0; // сдвиг столбиков по оси Y
 
 let life = 3;
 var count=0;
-
+let speedup = 0;
+let speeddown = 0;
 var start = game.newImageObject({ 
      file : "img/start.png", 
      x : 600, 
@@ -67,16 +79,6 @@ wall.push(
      x : DX + W, 
      y : 340 - DY,
    }));
-
-
-
-// wall.push(
-//    game.newImageObject({ 
-//      file : "3.png", 
-//      x : DX + W, 
-//      y : -720 - DY,
-//      angle: 180
-//    }));
 };
 };
 
@@ -85,18 +87,20 @@ game.newLoop('menu', function () {
 wall = [];
 life = 3;
 start.x = 600;
-helicopter.x = W;
-helicopter.y = 64;
+helicopter_1.x = W;
+helicopter_1.y = 64;
+helicopter_2.x = W;
+helicopter_2.y = 64;
+helicopter_3.x = W;
+helicopter_3.y = 64;
 player.x=600;
 player.y=270;
-player.angle=0;
 dy=0;
 fon.x = 0;
 fon.y = 0;
 fon.draw();
 start.draw();
 player.draw();
-// helicopter.draw();
 
 pjs.brush.drawText({
   text : "Нажми мышкой на сцене, чтобы начать игру", 
@@ -129,12 +133,7 @@ if (mouse.isDown('LEFT')) {
 
 game.newLoop('game', function () {
 
-// dy+=0.5;
 player.y += gravity;
-// player.angle=dy;
-// if (mouse.isDown('LEFT')) {
-// 	player.y -=30;
-// }
 
 pjs.presets.bgCycle(fon, -2);
 
@@ -143,6 +142,9 @@ fon.draw();
 music.play();
 start.draw();
 player.draw();
+helicopter_1.draw();
+helicopter_2.draw();
+helicopter_3.draw();
 
 if (key.isDown('LEFT')||key.isDown('A')) {
 	if (player.x != 0) {
@@ -170,10 +172,10 @@ for (var i in wall) {
 
     wall[i].x -=4;
 
- if (wall[i].x + wall[i].w < 0 && wall[i].y>0) {
- 	var G = r(-110, 110);
- 	count++;
- }
+ 	if (wall[i].x + wall[i].w < 0 && wall[i].y>0) {
+ 		var G = r(-55, 55);
+ 		count++;
+ 	}
 
 
     if (wall[i].x + wall[i].w <0) {
@@ -182,17 +184,11 @@ for (var i in wall) {
         if (wall[i].y>0) {
         	wall[i].y = 340 - G;
         }
-
-        if (wall[i].y<0) {
-        	wall[i].y = -820 - G;
-        }
-
     }
 
 
     if (player.isStaticIntersect(wall[i].getStaticBoxW())) {
     	gravity = 0;
-    	// player.y = wall[i].y - player.h - 1;
     	if (key.isDown('W')||key.isDown('UP')) {
     		let timerId = setInterval(() => player.y -= 1.5, 50);
     		setTimeout(() => {clearInterval(timerId);}, 2000);
@@ -209,12 +205,45 @@ for (var i in wall) {
 		
     }
 	wall[i].draw();
-}console.log(helicopter.x);
+}
 if (count >= 10) {
-	helicopter.draw();
-  if (helicopter.x > W/2) {
-    helicopter.x -= 2;
-  }
+	helicopter_1.y += speedup;
+ 	helicopter_1.y -= speeddown;
+ 	helicopter_2.y += speedup;
+ 	helicopter_2.y -= speeddown;
+ 	helicopter_3.y += speedup;
+ 	helicopter_3.y -= speeddown;
+ 	if (player.isStaticIntersect(helicopter_1.getStaticBox())) {
+		player.y += 32;
+    	player.x += 64;
+    }
+    if (player.isStaticIntersect(helicopter_2.getStaticBox())) {
+    	player.y += 32;
+    }
+    if (player.isStaticIntersect(helicopter_3.getStaticBox())) {
+    	player.y += 32;
+    	player.x -= 64;
+    }
+	if (helicopter_1.x != 0) {
+    	helicopter_1.x -= 8;
+    	if (helicopter_1.x < 0) {
+    		helicopter_1.x = 0;
+    	}
+  	}
+  	if (helicopter_1.x == 0 & helicopter_1.y <= 64) {
+    	speedup = 3;
+  		speeddown = 0;
+    }
+  	if (helicopter_2.y >= 260) {
+    	speedup = 0;
+    	speeddown = 3;
+  	}
+  	if (helicopter_2.x > W / 2) {
+  		helicopter_2.x -= 6;
+    }
+  	if (helicopter_3.x != W - helicopter_3.w) {
+  		helicopter_3.x -= 4;
+  	}
 }
 pjs.brush.drawText({
   text : "Жизнь: " + life, 
